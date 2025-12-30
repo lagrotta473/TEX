@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Django
+*.log
+db.sqlite3
+media/
+
+# IDEs (VSCode, etc)
+.vscode/
+.idea/
+
+# Docker (se tiver volumes locais mapeados na raiz que não queira subir)
+postgres_data/
