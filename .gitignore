@@ -16,3 +16,4 @@ media/
 
 # Docker (se tiver volumes locais mapeados na raiz que não queira subir)
 postgres_data/
+*.swp

@@ -3,19 +3,22 @@ version: '3.8'
 services:
   web:
     build: .
-    # O PULO DO GATO: Sincroniza sua pasta atual (.) com a pasta do container (/app)
     volumes:
       - .:/app
     ports:
       - "8000:8000"
-    environment:
-      - DEBUG=1
-      - SECRET_KEY=foo
-      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+    env_file:
+      - .env
     depends_on:
       - db
-    # Comando para subir o servidor ouvindo em todos os IPs
-    command: python manage.py runserver 0.0.0.0:8000
+    command: gunicorn mysite.wsgi:application --bind 0.0.0.0:8000 --workers ${GUNICORN_WORKERS}
+    
+    # --- LIMITES DO WEB (Django) ---
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'    # Usa no máximo metade de 1 núcleo
+          memory: 512M    # Trava em 512 MegaBytes (Ideal para Dev)
 
   db:
     image: postgres:15
@@ -25,6 +28,13 @@ services:
       - POSTGRES_DB=conveniencia_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      
+    # --- LIMITES DO BANCO (Postgres) ---
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M    # O Postgres adora comer RAM, aqui nós colocamos um freio
 
 volumes:
   postgres_data:
